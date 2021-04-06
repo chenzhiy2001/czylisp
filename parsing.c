@@ -30,6 +30,29 @@ void add_history(Char* unused){};
 #endif
 #endif
 
+long eval_op(long x, char *op, long y){//TODO 适配多个字符的op的情况
+  if (strcmp(op, "+") == 0) { return x + y; }
+  if (strcmp(op, "-") == 0) { return x - y; }
+  if (strcmp(op, "*") == 0) { return x * y; }
+  if (strcmp(op, "/") == 0) { return x / y; }
+  return 114514;
+}
+long eval(mpc_ast_t *t){
+  if(strstr(t->tag, "number")){ //TODO 用专用的tag查找方法来提升性能
+    return atoi(t->contents);
+  }
+
+  char *op = t->children[1]->contents;
+
+  long x = eval(t->children[2]);
+
+  int i = 3;
+  while(strstr(t->children[i]->tag,"expr")){
+    x = eval_op(x,op,eval(t->children[i]));
+    i++;
+  }//递归函数里面用循环，非常邪恶
+  return x;
+}
 //static char input[2048]; 
 int main(int argc, char **argv)
 {
@@ -49,16 +72,19 @@ int main(int argc, char **argv)
     blyat:/blyat/;\
   ",
   number, operator, expr, czylisp, blyat);
-  puts("czylisp Version June");
-  puts("Press Ctrl+c to Exit");
+  puts("czylisp Version June 6th 2021");
+  puts("Press ctrl+c to Exit");
   while (1)
   {
     char *input = readline("czylisp> ");
     add_history(input);
 //    printf("No you're a %s\n", input);
     mpc_result_t r;
+
     if(mpc_parse("<stdin>",input,czylisp,&r)){
-      mpc_ast_print(r.output);
+//      mpc_ast_print(r.output);
+      long result = eval(r.output);
+      printf("%li\n",result);
       mpc_ast_delete(r.output);
     }else{
       mpc_err_print(r.error);
@@ -67,5 +93,5 @@ int main(int argc, char **argv)
     free(input);
   }
   mpc_cleanup(5, number, operator, expr, blyat, czylisp);
-  return 0;
-}
+   return 0;
+} 
