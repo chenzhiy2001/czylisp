@@ -1,3 +1,16 @@
+/// 这个是期中答辩时演示的代码
+/* Makefile 
+# FILENAME = parsing
+
+# build:
+# 	@cc -std=c99 -Wall $(FILENAME).c mpc.c -ledit -lm -o $(FILENAME)
+# build-windows:
+# 	@cc -std=c99 -Wall $(FILENAME).c mpc.c -o $(FILENAME)
+
+
+# run:build
+# 	@./$(FILENAME)
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpc.h"
